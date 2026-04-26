@@ -1,62 +1,84 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Prime - Bento Edition</title>
-    <!-- Tailwind CSS Play CDN -->
+    <title>Barbearia Prime - Premium Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #f4f4f5; }
-        .bento-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; }
-        @media (min-width: 768px) {
-            .bento-grid { grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(100px, auto); }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #fff; 
+            overflow-x: hidden; 
         }
-        .bento-item { border-radius: 1.5rem; border: 1px solid rgba(39, 39, 42, 0.5); background-color: #18181b; overflow: hidden; transition: all 0.3s ease; }
-        .bento-item:hover { border-color: rgba(245, 158, 11, 0.5); transform: translateY(-4px); }
-        .amber-accent { color: #f59e0b; }
-        .bg-amber { background-color: #f59e0b; }
+        .bento-card { 
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
+            border: 1px solid rgba(39, 39, 42, 0.5); 
+        }
+        .bento-card:hover { 
+            transform: translateY(-4px); 
+            border-color: rgba(245, 158, 11, 0.3); 
+            background-color: rgba(24, 24, 27, 0.8);
+        }
+        .selected { 
+            border-color: #f59e0b !important; 
+            background-color: #f59e0b !important; 
+        }
+        .selected span, .selected i { color: #000 !important; }
+        .selected .price-tag { color: #000 !important; opacity: 0.8; }
+        
+        /* Bloom effect */
+        .bloom {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            background: rgba(245, 158, 11, 0.03);
+            filter: blur(150px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
+    <div class="bloom top-0 right-0"></div>
+    <div class="bloom bottom-0 left-0"></div>
 
     <div class="max-w-6xl mx-auto flex flex-col gap-4">
+        
         <!-- HEADER -->
-        <header class="flex justify-between items-center mb-2 px-2">
+        <header class="flex justify-between items-center px-2 mb-2">
             <div class="text-xl font-black tracking-tighter uppercase italic">
-                Barbearia <span class="amber-accent">Prime</span>
+                Barbearia <span class="text-amber-500">Prime</span>
             </div>
             <div class="hidden md:flex gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
-                <span>Estilo Clássico</span>
+                <span>The Gold Standard</span>
                 <span>•</span>
-                <span>Tradição Moderna</span>
+                <span>Executive Grooming</span>
             </div>
         </header>
 
-        <!-- BENTO GRID -->
-        <div class="bento-grid">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-min">
             
             <!-- HERO TILE -->
-            <div class="bento-item md:col-span-8 md:row-span-4 relative flex flex-col justify-end p-8 md:p-12 min-h-[400px] shadow-2xl">
-                <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80" 
-                         class="w-full h-full object-cover opacity-30 transform hover:scale-105 transition-transform duration-1000">
+            <div class="md:col-span-8 md:row-span-2 rounded-[2rem] bg-zinc-900 overflow-hidden relative group min-h-[400px] flex flex-col justify-end p-8 md:p-12 shadow-2xl bento-card">
+                <div class="absolute inset-0 z-0 opacity-20">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
                 </div>
                 <div class="relative z-10">
-                    <span class="amber-accent font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Excelência Signature</span>
-                    <h1 class="text-4xl md:text-6xl font-black leading-none mb-6 tracking-tighter uppercase italic">
-                        O CORTE QUE <br><span class="amber-accent">REPOSICIONA</span> VOCÊ.
+                    <span class="text-amber-500 font-bold tracking-[0.4em] uppercase text-[9px] mb-4 block">Estética de Autoridade</span>
+                    <h1 class="text-4xl md:text-7xl font-black leading-none mb-6 tracking-tighter uppercase italic">
+                        O CORTE QUE <br/><span class="text-amber-500">DEFINE</span> QUEM VOCÊ É.
                     </h1>
                     <div class="flex flex-wrap gap-3">
-                        <button onclick="abrirWhatsApp()" class="bg-amber text-black font-black rounded-full px-8 py-4 text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg flex items-center">
-                            <i data-lucide="phone" class="w-4 h-4 mr-2"></i> Agendar Agora
+                        <button onclick="abrirWhatsApp()" class="bg-amber-500 hover:bg-amber-600 text-black font-black rounded-full px-8 py-4 text-[10px] uppercase tracking-widest transition-all shadow-lg hover:scale-105">
+                            <i data-lucide="phone" class="inline-block w-3 h-3 mr-2 mb-0.5"></i> Agendar Agora
                         </button>
-                        <button onclick="scrollParaServicos()" class="bg-white text-black font-black rounded-full px-8 py-4 text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all">
+                        <button onclick="document.getElementById('servicos').scrollIntoView({behavior:'smooth'})" class="bg-white hover:bg-zinc-200 text-black font-black rounded-full px-8 py-4 text-[10px] uppercase tracking-widest transition-all hover:scale-105">
                             Ver Serviços
                         </button>
                     </div>
@@ -64,92 +86,155 @@
             </div>
 
             <!-- SERVIÇOS TILE -->
-            <div id="servicos" class="bento-item md:col-span-4 md:row-span-3 p-8 flex flex-col">
-                <div class="flex justify-between items-center mb-8">
-                    <h3 class="text-lg font-black uppercase tracking-tight italic">Serviços</h3>
-                    <i data-lucide="scissors" class="amber-accent w-5 h-5"></i>
+            <div id="servicos" class="md:col-span-4 md:row-span-2 rounded-[2rem] bg-zinc-900 p-8 shadow-xl flex flex-col bento-card">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-black uppercase tracking-tight italic">Nossos Serviços</h3>
+                    <i data-lucide="scissors" class="text-amber-500 w-5 h-5"></i>
                 </div>
-                <div class="space-y-6 flex-grow">
-                    <div class="flex justify-between items-end border-b border-zinc-800 pb-2">
-                        <span class="text-zinc-400">Corte Prime</span>
-                        <span class="font-black">R$ 50</span>
+                <div class="space-y-2 flex-grow" id="lista-servicos">
+                    <!-- JS Injects items here -->
+                </div>
+                <div class="mt-8 pt-6 border-t border-zinc-800/50">
+                    <div class="flex justify-between items-center mb-6 px-1">
+                        <span class="text-[10px] text-zinc-500 uppercase font-black">Investimento Total</span>
+                        <span class="text-3xl font-black text-amber-500" id="total-val">R$ 0</span>
                     </div>
-                    <div class="flex justify-between items-end border-b border-zinc-800 pb-2">
-                        <span class="text-zinc-400">Barba Master</span>
-                        <span class="font-black">R$ 40</span>
+                    <button onclick="abrirWhatsApp()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-black rounded-full py-5 uppercase tracking-widest text-[10px] shadow-lg shadow-amber-500/10">
+                        Garantir Horário
+                    </button>
+                </div>
+            </div>
+
+            <!-- MANIFESTO / APRESENTAÇÃO -->
+            <div class="md:col-span-12 rounded-[2.5rem] bg-zinc-900 border border-zinc-800/50 p-8 md:p-12 shadow-xl flex flex-col md:flex-row gap-8 items-center text-center md:text-left bento-card">
+                <div class="flex-1">
+                    <h2 class="text-2xl md:text-3xl font-black italic uppercase tracking-tighter mb-4 leading-tight">A <span class="text-amber-500">Autoridade</span> em Estética Masculina.</h2>
+                    <p class="text-zinc-400 leading-relaxed text-sm md:text-base max-w-2xl">
+                        Na Barbearia Prime, não entregamos apenas cortes; forjamos confiança. Com técnicas de visagismo avançado e o selo de excelência Prime, cada ritual é desenhado para o homem que entende que sua imagem é seu maior cartão de visitas. Bem-vindo ao topo do autocuidado.
+                    </p>
+                </div>
+                <div class="flex gap-10">
+                    <div class="text-center group">
+                        <div class="text-4xl font-black text-amber-500 transition-transform group-hover:scale-110">10+</div>
+                        <div class="text-[9px] uppercase font-black text-zinc-600 tracking-[0.2em]">Anos de Tradição</div>
                     </div>
-                    <div class="flex justify-between items-end border-b border-zinc-800 pb-2">
-                        <span class="text-zinc-400">Premium Combo</span>
-                        <span class="font-black">R$ 80</span>
+                    <div class="w-px h-12 bg-zinc-800 hidden md:block"></div>
+                    <div class="text-center group">
+                        <div class="text-4xl font-black text-amber-500 transition-transform group-hover:scale-110">100%</div>
+                        <div class="text-[9px] uppercase font-black text-zinc-600 tracking-[0.2em]">Foco em Você</div>
                     </div>
                 </div>
-                <p class="mt-8 text-[10px] text-zinc-600 uppercase font-bold tracking-widest">Tabela de Preços • 2024</p>
             </div>
 
             <!-- STATUS TILE -->
-            <div class="bento-item md:col-span-4 p-8 flex flex-col justify-center items-center text-center">
-                <div class="relative mb-2">
+            <div class="md:col-span-3 rounded-[2rem] bg-zinc-900 p-8 flex flex-col justify-center items-center text-center bento-card">
+                <div class="relative mb-3">
                     <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse absolute -right-1 -top-1"></div>
                     <i data-lucide="clock" class="w-8 h-8 text-zinc-700"></i>
                 </div>
-                <h4 class="text-xl font-black italic">ABERTO AGORA</h4>
-                <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Ter-Sáb | 09h - 20h</p>
+                <h4 class="text-lg font-black italic leading-tight">ABERTO<br/>AGORA</h4>
+                <p class="text-zinc-600 text-[9px] mt-2 font-bold uppercase tracking-widest">Ter-Sáb | 09h - 20h</p>
             </div>
 
             <!-- LOCALIZAÇÃO TILE -->
-            <div class="bento-item md:col-span-4 bg-amber p-8 flex flex-col justify-between text-black">
-                <div>
-                    <div class="flex justify-between items-start">
-                        <h3 class="text-2xl font-black uppercase tracking-tight italic leading-none">Localização <br>Prime</h3>
-                        <i data-lucide="map-pin" class="w-6 h-6 opacity-40"></i>
+            <div class="md:col-span-5 rounded-[2rem] bg-amber-500 p-8 flex flex-col justify-between text-black bento-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-2xl font-black uppercase italic leading-none mb-1">Unidade Central</h3>
+                        <p class="font-bold text-black/80 text-sm">Rua das Barbearias, 123 • Centro</p>
                     </div>
-                    <p class="font-bold text-black/70 text-sm mt-4">Rua das Barbearias, 123 • Centro</p>
+                    <i data-lucide="map-pin" class="w-7 h-7 opacity-30"></i>
                 </div>
-                <a href="https://maps.google.com" target="_blank" class="text-black font-black uppercase tracking-widest text-[10px] mt-6 hover:underline">
-                    Ver no Google Maps →
+                <a href="https://maps.google.com" target="_blank" class="text-black font-black uppercase tracking-[0.2em] text-[9px] mt-6 flex items-center hover:underline italic">
+                    Rastrear no Google Maps →
                 </a>
             </div>
 
             <!-- SOCIAL TILE -->
-            <div class="bento-item md:col-span-4 p-8 flex items-center justify-between">
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-zinc-600 uppercase font-black tracking-widest mb-1">Nosso Insta</span>
-                    <span class="text-lg font-black hover:text-amber-500 cursor-pointer transition-colors">@primebarber</span>
+            <div class="md:col-span-4 rounded-[2rem] bg-zinc-900/40 p-8 flex items-center justify-between shadow-lg bento-card">
+                <div>
+                    <span class="text-[9px] text-zinc-600 uppercase font-black tracking-widest mb-1 block italic">Social Mindset</span>
+                    <span class="text-lg font-black text-amber-500">@primebarber</span>
                 </div>
-                <div class="flex gap-2">
-                   <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-500 transition-all">
-                     <i data-lucide="instagram" class="w-4 h-4 text-white"></i>
-                   </a>
-                   <a href="#" class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-500 transition-all">
-                     <i data-lucide="facebook" class="w-4 h-4 text-white"></i>
-                   </a>
-                </div>
+                <a href="https://instagram.com" target="_blank" class="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-black transition-all">
+                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                </a>
             </div>
-
         </div>
 
-        <footer class="mt-4 py-4 text-center text-zinc-800 text-[10px] font-black uppercase tracking-[0.4em]">
-            Barbearia Prime • Premium Masculino
+        <footer class="mt-8 py-8 text-center text-zinc-800 text-[10px] font-black uppercase tracking-[0.5em]">
+            © 2024 Barbearia Prime • Premium Masculino
         </footer>
     </div>
 
-    <!-- BACKGROUND BLOOM EFFECT -->
-    <div class="fixed top-0 right-0 w-[40vw] h-[40vw] bg-amber-500/10 blur-[120px] rounded-full -z-10"></div>
-    <div class="fixed bottom-0 left-0 w-[40vw] h-[40vw] bg-amber-500/10 blur-[120px] rounded-full -z-10"></div>
-
     <script>
-        // Inicializa os ícones
+        // Inicializa ícones Lucide
         lucide.createIcons();
 
-        function scrollParaServicos() {
-            document.getElementById('servicos').scrollIntoView({ behavior: 'smooth' });
+        // Dados dos serviços
+        const servicos_data = [
+            { id: "degrade", nome: "Degradê", preco: 30 },
+            { id: "barba", nome: "Barba", preco: 20 },
+            { id: "sobrancelha", nome: "Sobrancelha", preco: 10 },
+            { id: "combo", nome: "Combo Prime (Completo)", preco: 50 },
+        ];
+
+        let selecionados = [];
+        let total = 0;
+
+        // Renderiza a lista de serviços automaticamente
+        function renderServicos() {
+            const container = document.getElementById('lista-servicos');
+            container.innerHTML = servicos_data.map(s => `
+                <div onclick="toggleServico('${s.id}', ${s.preco}, this)" 
+                     class="flex justify-between items-center p-3 rounded-2xl border border-zinc-800/50 bg-zinc-800/10 cursor-pointer group transition-all">
+                    <span class="text-sm font-bold text-zinc-400 group-hover:text-white transition-colors">${s.nome}</span>
+                    <span class="font-black text-zinc-100 text-xs price-tag">R$ ${s.preco}</span>
+                </div>
+            `).join('');
         }
 
+        // Sistema de seleção
+        function toggleServico(id, preco, el) {
+            const index = selecionados.indexOf(id);
+            if (index > -1) {
+                selecionados.splice(index, 1);
+                total -= preco;
+                el.classList.remove('selected');
+            } else {
+                selecionados.push(id);
+                total += preco;
+                el.classList.add('selected');
+            }
+            document.getElementById('total-val').innerText = 'R$ ' + total;
+        }
+
+        // Agendamento via WhatsApp
         function abrirWhatsApp() {
-            const fone = "5511999999999";
-            const msg = encodeURIComponent("Olá! Gostaria de agendar um horário na Barbearia Prime.");
+            const fone = "5581995655408";
+            
+            if (selecionados.length === 0) {
+                alert("Por favor, selecione ao menos um serviço executivo!");
+                document.getElementById('servicos').scrollIntoView({behavior:'smooth'});
+                return;
+            }
+
+            const itens = servicos_data
+                .filter(s => selecionados.includes(s.id))
+                .map(s => `- ${s.nome} (R$ ${s.preco})`)
+                .join("%0A");
+
+            const msg = `*SOLICITAÇÃO DE AGENDAMENTO PREMIUM*%0A%0A` +
+                        `Olá! Desejo reservar os seguintes serviços na Barbearia Prime:%0A%0A` +
+                        `${itens}%0A%0A` +
+                        `*Investimento Total: R$ ${total}*%0A%0A` +
+                        `Gostaria de verificar a disponibilidade de agenda para esta semana.`;
+            
             window.open(`https://wa.me/${fone}?text=${msg}`, "_blank");
         }
+
+        // Inicia a aplicação
+        renderServicos();
     </script>
 </body>
 </html>
