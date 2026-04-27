@@ -5,19 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Impacto | Posicionamento de Elite em Campina Grande</title>
     
-    <!-- Fontes Premium -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Bibliotecas Necessárias (CDNs) -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/framer-motion@11.0.8/dist/framer-motion.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Configuração do Tema Visual -->
+    <!-- React & Babel for standalone execution -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Framer Motion Standalone -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
     <script>
         tailwind.config = {
           theme: {
@@ -42,6 +45,8 @@
         @layer base {
           body {
             @apply bg-ink text-[#e8e2d9] font-sans selection:bg-gold/30 selection:text-ink overflow-x-hidden;
+            margin: 0;
+            padding: 0;
           }
           html {
             @apply scroll-smooth;
@@ -56,46 +61,32 @@
             @apply content-[''] h-[0.5px] bg-[#b89a5a4d] flex-1;
           }
         }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Código da Aplicação -->
     <script type="text/babel">
+        // Extração segura das bibliotecas
         const { useState, useEffect } = React;
-        const { motion, AnimatePresence } = FramerMotion;
+        // Framer Motion via CDN expõe globalmente como Motion
+        const motion = window.Motion || window.FramerMotion?.motion || { div: "div" };
+        const AnimatePresence = window.FramerMotion?.AnimatePresence || (({children}) => <>{children}</>);
 
-        // Componentes Auxiliares
-        const ArrowDown = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <polyline points="19 12 12 19 5 12"></polyline>
-            </svg>
-        );
-
-        const Reveal = ({ children, delay = 0, direction = 'up', duration = 0.8, className = "" }) => {
-          const getInitial = () => {
-            switch (direction) {
-              case 'up': return { opacity: 0, y: 24 };
-              case 'down': return { opacity: 0, y: -24 };
-              case 'left': return { opacity: 0, x: 24 };
-              case 'right': return { opacity: 0, x: -24 };
-              default: return { opacity: 0, y: 24 };
-            }
-          };
-
-          return (
-            <motion.div
-              initial={getInitial()}
-              whileInView={{ opacity: 1, x: 0, y: 0 }}
-              viewport={{ once: true, margin: "-12%" }}
-              transition={{ duration, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
-              className={className}
-            >
-              {children}
-            </motion.div>
-          );
+        const stageLabels = {
+          hook: "Apresentação",
+          conscious: "Consciência",
+          solution: "Metodologia",
+          cta: "Decisão"
         };
 
         const Navbar = ({ stage }) => (
@@ -104,20 +95,21 @@
               O <span className="italic font-normal group-hover:text-gold transition-colors">Impacto</span>
             </div>
             <div className="flex gap-4 sm:gap-8 items-center text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-bold text-gold/60">
+              <span className="hidden lg:inline hover:text-gold transition-colors opacity-40">Campina Grande, PB</span>
+              <div className="hidden lg:block h-4 w-[1px] bg-gold/10"></div>
+              <span className="hidden sm:inline opacity-60">Status da Jornada</span>
+              <div className="h-6 w-[1px] bg-gold/20 mx-1 sm:mx-2"></div>
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
                 </span>
-                <span className="text-gold-light font-bold tracking-widest uppercase">
-                  {stage === "hook" ? "Apresentação" : stage === "conscious" ? "Consciência" : stage === "solution" ? "Metodologia" : "Decisão"}
-                </span>
+                <span className="text-gold-light font-bold tracking-widest">{stageLabels[stage]}</span>
               </div>
             </div>
           </nav>
         );
 
-        // Estrutura de Dados
         const pillars = [
           { num: "01", title: "Vitrine Impecável", desc: "Sites de alto padrão que transmitem confiança imediata e elevam sua percepção de valor desde o primeiro contato." },
           { num: "02", title: "Atração Qualificada", desc: "Foco total em clientes que valorizam qualidade, não apenas preço. Posicionamos você como a escolha óbvia." },
@@ -133,7 +125,8 @@
           { num: "NÍVEL 05", title: "Referência", desc: "Soberania absoluta. Sua reputação online precede o contato inicial, permitindo a seleção dos melhores clientes e lucros máximos." }
         ];
 
-        // Componente Principal
+        const diagnosticFeatures = ["Análise de Conversão", "Mapeamento de SEO Local", "Auditoria de Autoridade", "Plano Estratégico (30 Dias)", "Sessão Consultiva Individual"];
+
         function App() {
           const [stage, setStage] = useState('hook');
           const [activePyramidLevel, setActivePyramidLevel] = useState(0);
@@ -146,20 +139,17 @@
             <div className="min-h-screen bg-ink text-[#e8e2d9] font-sans selection:bg-gold/30 selection:text-ink overflow-x-hidden">
               <Navbar stage={stage} />
               
-              {/* Barra de Progresso */}
               <div className="fixed top-[64px] sm:top-[76px] left-0 w-full h-[2px] bg-gold/5 z-[90]">
-                <motion.div 
-                  className="h-full bg-gold shadow-[0_0_10px_rgba(184,154,90,0.5)]"
-                  initial={{ width: "25%" }}
-                  animate={{ width: stage === 'hook' ? "25%" : stage === 'conscious' ? "50%" : stage === 'solution' ? "75%" : "100%" }}
+                <div 
+                  className="h-full bg-gold shadow-[0_0_10px_rgba(184,154,90,0.5)] transition-all duration-700 ease-out"
+                  style={{ width: stage === 'hook' ? "25%" : stage === 'conscious' ? "50%" : stage === 'solution' ? "75%" : "100%" }}
                 />
               </div>
 
-              <AnimatePresence mode="wait">
+              <div className="pt-24 sm:pt-32">
                 {stage === 'hook' && (
-                  <motion.div key="hook" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
-                    <section className="min-h-screen flex flex-col justify-center px-6 sm:px-[12%] pt-40 sm:pt-48 pb-20 relative overflow-hidden bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(184,154,90,0.06)_0%,transparent_70%)]">
-                      <div className="absolute top-0 right-0 p-12 pointer-events-none opacity-[0.03] font-serif italic text-[clamp(120px,18vw,280px)] leading-none text-gold z-0 select-none whitespace-nowrap">Impacto</div>
+                  <div className="fade-in">
+                    <section className="min-h-[85vh] flex flex-col justify-center px-6 sm:px-[12%] py-20 relative overflow-hidden bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(184,154,90,0.06)_0%,transparent_70%)]">
                       <div className="relative z-10 max-w-5xl">
                         <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.4em] text-gold font-bold mb-10">
                           <div className="h-[1px] w-12 bg-gold"></div>O POSICIONAMENTO DOS LÍDERES
@@ -172,27 +162,26 @@
                           O mercado julga seu serviço pelo que encontra no Google. Não deixe uma presença amadora <span className="text-gold">afastar seus melhores clientes.</span>
                         </p>
                         <div className="flex flex-wrap gap-8 items-center">
-                          <button onClick={() => setStage('conscious')} className="group relative overflow-hidden bg-gold text-ink px-14 py-6 text-[11px] font-extrabold uppercase tracking-[0.25em] transition-all hover:bg-gold-light hover:px-16">
+                          <button onClick={() => setStage('conscious')} className="group relative overflow-hidden bg-gold text-ink px-14 py-6 text-[11px] font-extrabold uppercase tracking-[0.25em] transition-all hover:bg-gold-light">
                             <span className="relative z-10">Quero dominar meu nicho</span>
-                            <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">→</span>
                           </button>
                         </div>
                       </div>
                     </section>
-                  </motion.div>
+                  </div>
                 )}
 
                 {stage === 'conscious' && (
-                  <motion.div key="conscious" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
-                    <section className="min-h-screen py-32 px-6 sm:px-[12%]">
+                  <div className="fade-in">
+                    <section className="min-h-[85vh] py-20 px-6 sm:px-[12%]">
                       <div className="text-center mb-16">
-                        <div className="eyebrow mx-auto w-fit mb-6">Fase 02: Jornada da Autoridade</div>
-                        <h2 className="font-serif text-4xl font-light mb-4 text-center">Sua marca está <span className="italic text-gold">travada em qual nível?</span></h2>
+                        <div className="eyebrow mx-auto w-fit mb-6 text-center">Fase 02: Onde você está?</div>
+                        <h2 className="font-serif text-4xl font-light mb-4 text-center">Sua marca está <span className="italic text-gold">travada por quê?</span></h2>
                       </div>
                       <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-3">
                           {pyramidLevels.map((level, idx) => (
-                            <button key={idx} onClick={() => setActivePyramidLevel(idx)} className={`w-full text-left p-6 transition-all border ${activePyramidLevel === idx ? 'bg-gold/10 border-gold shadow-lg shadow-gold/5' : 'bg-[#13110e] border-gold/10 opacity-50'}`} style={{ marginLeft: `${(4-idx)*4}%`, width: `${100-((4-idx)*4)}%` }}>
+                            <button key={idx} onClick={() => setActivePyramidLevel(idx)} className={`w-full text-left p-6 transition-all border ${activePyramidLevel === idx ? 'bg-gold/10 border-gold shadow-lg' : 'bg-[#13110e] border-gold/10 opacity-50'}`} style={{ marginLeft: `${(4-idx)*4}%`, width: `${100-((4-idx)*4)}%` }}>
                               <div className="flex items-center gap-4">
                                 <span className="font-serif text-xl italic text-gold">{level.num}</span>
                                 <h3 className="text-[11px] font-bold uppercase tracking-widest">{level.title}</h3>
@@ -205,19 +194,19 @@
                           <p className="text-[#e8e2d9]/70 leading-relaxed text-lg">{pyramidLevels[activePyramidLevel].desc}</p>
                         </div>
                       </div>
-                      <div className="mt-20 flex justify-between gap-8 border-t border-gold/10 pt-10">
+                      <div className="mt-20 flex flex-wrap justify-between gap-8 border-t border-gold/10 pt-10 max-w-5xl mx-auto">
                         <button onClick={() => setStage('hook')} className="text-[10px] text-gold/40 hover:text-gold uppercase tracking-widest font-bold">← Voltar</button>
                         <button onClick={() => setStage('solution')} className="bg-gold text-ink px-12 py-5 text-[11px] font-bold uppercase tracking-widest hover:bg-gold-light">Ver Metodologia →</button>
                       </div>
                     </section>
-                  </motion.div>
+                  </div>
                 )}
 
                 {stage === 'solution' && (
-                  <motion.div key="solution" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
-                    <section className="py-24 px-6 sm:px-[12%]">
-                      <div className="eyebrow w-fit mb-12">Fase 03: Diferenciação Estratégica</div>
-                      <h2 className="font-serif text-4xl font-light mb-16 max-w-4xl">Quatro pilares para <span className="italic text-gold">blindar</span> sua marca.</h2>
+                  <div className="fade-in">
+                    <section className="py-20 px-6 sm:px-[12%] max-w-7xl mx-auto">
+                      <div className="eyebrow w-fit mb-12">Fase 03: Metodologia Boutique</div>
+                      <h2 className="font-serif text-4xl font-light mb-16">Quatro pilares para <span className="italic text-gold">blindar</span> sua marca.</h2>
                       <div className="grid lg:grid-cols-2 gap-16 mb-24">
                         <div className="grid gap-4">
                           {pillars.map((pillar) => (
@@ -230,50 +219,47 @@
                             </div>
                           ))}
                         </div>
-                        <div className="bg-[#13110e] border border-gold/30 p-10 h-fit lg:sticky lg:top-32">
-                           <h3 className="font-serif text-3xl mb-8 italic text-[#e8e2d9]"><span className="text-green-500">Diagnóstico</span> Digital 360</h3>
+                        <div className="bg-[#13110e] border border-gold/30 p-10 h-fit lg:sticky lg:top-32 shadow-2xl shadow-gold/5">
+                           <h3 className="font-serif text-3xl mb-8 italic text-[#e8e2d9]"><span className="text-green-500">Diagnóstico</span> Digital Cirúrgico</h3>
                            <ul className="space-y-4 text-sm text-[#e8e2d9]/60 mb-10">
-                              <li className="flex gap-3"><span className="text-gold">—</span>Análise de Conversão</li>
-                              <li className="flex gap-3"><span className="text-gold">—</span>Mapeamento de SEO Local</li>
-                              <li className="flex gap-3"><span className="text-gold">—</span>Auditoria de Autoridade</li>
-                              <li className="flex gap-3"><span className="text-gold">—</span>Plano Estratégico (30 Dias)</li>
+                              {diagnosticFeatures.map((item, id) => <li key={id} className="flex gap-3"><span className="text-gold">—</span>{item}</li>)}
                            </ul>
-                           <div className="pt-8 border-t border-gold/10 flex flex-col items-center gap-6 text-center">
+                           <div className="pt-8 border-t border-gold/10 flex flex-col items-center gap-6">
                               <div className="text-3xl font-serif text-gold-light">R$ 280</div>
-                              <button onClick={() => setStage('cta')} className="w-full bg-gold text-ink px-10 py-5 text-[10px] font-bold uppercase tracking-widest hover:bg-gold-light">Garantir Meu Diagnóstico</button>
+                              <button onClick={() => setStage('cta')} className="w-full bg-gold text-ink px-10 py-5 text-[10px] font-bold uppercase tracking-widest hover:bg-gold-light transition-all">Quero garantir minha vaga</button>
                            </div>
                         </div>
                       </div>
+                      <div className="flex justify-start">
+                        <button onClick={() => setStage('conscious')} className="text-[10px] text-gold/40 hover:text-gold uppercase tracking-widest font-bold">← Voltar</button>
+                      </div>
                     </section>
-                  </motion.div>
+                  </div>
                 )}
 
                 {stage === 'cta' && (
-                  <motion.div key="cta" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }} transition={{ duration: 0.5 }}>
-                    <section className="min-h-[85vh] flex items-center justify-center py-24 px-6 sm:px-[12%] text-center">
-                        <div className="relative z-10 max-w-3xl">
-                          <Reveal>
-                            <div className="eyebrow mx-auto w-fit mb-8 uppercase tracking-[0.3em] font-bold">O próximo passo</div>
-                            <h2 className="font-serif text-5xl font-light mb-8">Chega de ser <span className="italic text-gold">apenas mais um.</span></h2>
-                            <p className="text-lg text-[#e8e2d9]/60 leading-relaxed mb-12 italic">O mercado não espera. Assuma o controle da sua imagem digital ou continue entregando seus clientes para quem investe em posicionamento.</p>
-                            <a href="https://wa.me/5581995655408?text=Olá,%20vi%20o%20site%20e%20quero%20fazer%20o%20Diagnóstico%20Digital." target="_blank" rel="noopener noreferrer" className="inline-block bg-gold text-ink px-16 py-6 text-xs font-bold uppercase tracking-[0.25em] transition-all hover:bg-gold-light shadow-xl shadow-gold/20">Iniciar Diagnóstico Real (R$ 280)</a>
-                            <button onClick={() => setStage('hook')} className="text-[9px] text-[#e8e2d9]/20 hover:text-gold/60 uppercase tracking-widest font-bold mt-12 block underline mx-auto">Voltar ao Início</button>
-                          </Reveal>
+                  <div className="fade-in">
+                    <section className="min-h-[80vh] flex items-center justify-center py-20 px-6 sm:px-[12%] text-center">
+                        <div className="max-w-3xl">
+                          <div className="eyebrow mx-auto w-fit mb-8">O Próximo Passo</div>
+                          <h2 className="font-serif text-[clamp(32px,6vw,60px)] font-light mb-8 leading-tight">Chega de ser <span className="italic text-gold">apenas mais um.</span></h2>
+                          <p className="text-lg text-[#e8e2d9]/60 leading-relaxed mb-12 italic">O mercado não espera. Assuma o controle da sua imagem digital ou continue entregando seus clientes para quem investe em posicionamento.</p>
+                          <a href="https://wa.me/5581995655408?text=Olá,%20acabei%20de%20ver%20o%20funil%20e%20quero%20gerar%20Impacto%20de%20verdade%20no%20meu%20bolso.%20Bora%20falar." target="_blank" rel="noopener noreferrer" className="inline-block bg-gold text-ink px-16 py-6 text-xs font-bold uppercase tracking-[0.25em] transition-all hover:bg-gold-light shadow-xl shadow-gold/20">Falar com Consultor Agora</a>
+                          <button onClick={() => setStage('hook')} className="text-[9px] text-[#e8e2d9]/20 hover:text-gold/60 uppercase tracking-widest transition-colors font-bold mt-12 block underline mx-auto">Recomeçar apresentação</button>
                         </div>
                     </section>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
+              </div>
 
-              <footer className="px-6 sm:px-12 py-12 border-t border-gold/10 bg-[#070605] flex flex-col sm:flex-row justify-between items-center gap-8 text-[10px] text-[#e8e2d9]/30 uppercase tracking-[0.2em] font-bold">
-                <p>© 2026 O Impacto · Campina Grande, PB</p>
-                <p>Estratégia · Marca · Performance</p>
+              <footer className="px-6 sm:px-12 py-12 border-t border-gold/10 bg-[#070605] flex flex-col sm:flex-row justify-between items-center gap-6 text-[10px] text-[#e8e2d9]/30 uppercase tracking-[0.2em] font-bold text-center">
+                <p>© 2026 O IMPACTO · CAMPINA GRANDE, PB</p>
+                <p>ESTRATÉGIA · MARCA · PERFORMANCE</p>
               </footer>
             </div>
           );
         }
 
-        // Renderização Final
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
