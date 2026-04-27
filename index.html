@@ -1,240 +1,281 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Prime - Premium Experience</title>
+    <title>O Impacto | Posicionamento de Elite em Campina Grande</title>
+    
+    <!-- Fontes Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bibliotecas Necessárias (CDNs) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/framer-motion@11.0.8/dist/framer-motion.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #050505; 
-            color: #fff; 
-            overflow-x: hidden; 
+
+    <!-- Configuração do Tema Visual -->
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                serif: ["Cormorant Garamond", "serif"],
+                sans: ["Montserrat", "sans-serif"],
+              },
+              colors: {
+                gold: {
+                  DEFAULT: '#c5a059',
+                  light: '#e2d1b3',
+                },
+                ink: '#050505',
+              }
+            }
+          }
         }
-        .bento-card { 
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
-            border: 1px solid rgba(39, 39, 42, 0.5); 
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+          body {
+            @apply bg-ink text-[#e8e2d9] font-sans selection:bg-gold/30 selection:text-ink overflow-x-hidden;
+          }
+          html {
+            @apply scroll-smooth;
+          }
         }
-        .bento-card:hover { 
-            transform: translateY(-4px); 
-            border-color: rgba(245, 158, 11, 0.3); 
-            background-color: rgba(24, 24, 27, 0.8);
-        }
-        .selected { 
-            border-color: #f59e0b !important; 
-            background-color: #f59e0b !important; 
-        }
-        .selected span, .selected i { color: #000 !important; }
-        .selected .price-tag { color: #000 !important; opacity: 0.8; }
-        
-        /* Bloom effect */
-        .bloom {
-            position: fixed;
-            width: 50vw;
-            height: 50vw;
-            background: rgba(245, 158, 11, 0.03);
-            filter: blur(150px);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
+
+        @layer components {
+          .eyebrow {
+            @apply text-[10px] font-semibold tracking-[0.25em] uppercase text-gold flex items-center gap-3 mb-6;
+          }
+          .eyebrow::before, .eyebrow::after {
+            @apply content-[''] h-[0.5px] bg-[#b89a5a4d] flex-1;
+          }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="bloom top-0 right-0"></div>
-    <div class="bloom bottom-0 left-0"></div>
+<body>
+    <div id="root"></div>
 
-    <div class="max-w-6xl mx-auto flex flex-col gap-4">
-        
-        <!-- HEADER -->
-        <header class="flex justify-between items-center px-2 mb-2">
-            <div class="text-xl font-black tracking-tighter uppercase italic">
-                Barbearia <span class="text-amber-500">Prime</span>
+    <!-- Código da Aplicação -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = FramerMotion;
+
+        // Componentes Auxiliares
+        const ArrowDown = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+        );
+
+        const Reveal = ({ children, delay = 0, direction = 'up', duration = 0.8, className = "" }) => {
+          const getInitial = () => {
+            switch (direction) {
+              case 'up': return { opacity: 0, y: 24 };
+              case 'down': return { opacity: 0, y: -24 };
+              case 'left': return { opacity: 0, x: 24 };
+              case 'right': return { opacity: 0, x: -24 };
+              default: return { opacity: 0, y: 24 };
+            }
+          };
+
+          return (
+            <motion.div
+              initial={getInitial()}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
+              viewport={{ once: true, margin: "-12%" }}
+              transition={{ duration, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
+              className={className}
+            >
+              {children}
+            </motion.div>
+          );
+        };
+
+        const Navbar = ({ stage }) => (
+          <nav className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-6 sm:px-12 py-5 sm:py-6 bg-ink/90 backdrop-blur-md border-b border-gold/10 transition-all font-sans">
+            <div className="font-serif text-lg sm:text-2xl tracking-[0.15em] text-gold-light group cursor-default uppercase font-light">
+              O <span className="italic font-normal group-hover:text-gold transition-colors">Impacto</span>
             </div>
-            <div class="hidden md:flex gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">
-                <span>The Gold Standard</span>
-                <span>•</span>
-                <span>Executive Grooming</span>
+            <div className="flex gap-4 sm:gap-8 items-center text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-bold text-gold/60">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                </span>
+                <span className="text-gold-light font-bold tracking-widest uppercase">
+                  {stage === "hook" ? "Apresentação" : stage === "conscious" ? "Consciência" : stage === "solution" ? "Metodologia" : "Decisão"}
+                </span>
+              </div>
             </div>
-        </header>
+          </nav>
+        );
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-min">
-            
-            <!-- HERO TILE -->
-            <div class="md:col-span-8 md:row-span-2 rounded-[2rem] bg-zinc-900 overflow-hidden relative group min-h-[400px] flex flex-col justify-end p-8 md:p-12 shadow-2xl bento-card">
-                <div class="absolute inset-0 z-0 opacity-20">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
-                </div>
-                <div class="relative z-10">
-                    <span class="text-amber-500 font-bold tracking-[0.4em] uppercase text-[9px] mb-4 block">Estética de Autoridade</span>
-                    <h1 class="text-4xl md:text-7xl font-black leading-none mb-6 tracking-tighter uppercase italic">
-                        O CORTE QUE <br/><span class="text-amber-500">DEFINE</span> QUEM VOCÊ É.
-                    </h1>
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="abrirWhatsApp()" class="bg-amber-500 hover:bg-amber-600 text-black font-black rounded-full px-8 py-4 text-[10px] uppercase tracking-widest transition-all shadow-lg hover:scale-105">
-                            <i data-lucide="phone" class="inline-block w-3 h-3 mr-2 mb-0.5"></i> Agendar Agora
-                        </button>
-                        <button onclick="document.getElementById('servicos').scrollIntoView({behavior:'smooth'})" class="bg-white hover:bg-zinc-200 text-black font-black rounded-full px-8 py-4 text-[10px] uppercase tracking-widest transition-all hover:scale-105">
-                            Ver Serviços
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SERVIÇOS TILE -->
-            <div id="servicos" class="md:col-span-4 md:row-span-2 rounded-[2rem] bg-zinc-900 p-8 shadow-xl flex flex-col bento-card">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-black uppercase tracking-tight italic">Nossos Serviços</h3>
-                    <i data-lucide="scissors" class="text-amber-500 w-5 h-5"></i>
-                </div>
-                <div class="space-y-2 flex-grow" id="lista-servicos">
-                    <!-- JS Injects items here -->
-                </div>
-                <div class="mt-8 pt-6 border-t border-zinc-800/50">
-                    <div class="flex justify-between items-center mb-6 px-1">
-                        <span class="text-[10px] text-zinc-500 uppercase font-black">Investimento Total</span>
-                        <span class="text-3xl font-black text-amber-500" id="total-val">R$ 0</span>
-                    </div>
-                    <button onclick="abrirWhatsApp()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-black rounded-full py-5 uppercase tracking-widest text-[10px] shadow-lg shadow-amber-500/10">
-                        Garantir Horário
-                    </button>
-                </div>
-            </div>
-
-            <!-- MANIFESTO / APRESENTAÇÃO -->
-            <div class="md:col-span-12 rounded-[2.5rem] bg-zinc-900 border border-zinc-800/50 p-8 md:p-12 shadow-xl flex flex-col md:flex-row gap-8 items-center text-center md:text-left bento-card">
-                <div class="flex-1">
-                    <h2 class="text-2xl md:text-3xl font-black italic uppercase tracking-tighter mb-4 leading-tight">A <span class="text-amber-500">Autoridade</span> em Estética Masculina.</h2>
-                    <p class="text-zinc-400 leading-relaxed text-sm md:text-base max-w-2xl">
-                        Na Barbearia Prime, não entregamos apenas cortes; forjamos confiança. Com técnicas de visagismo avançado e o selo de excelência Prime, cada ritual é desenhado para o homem que entende que sua imagem é seu maior cartão de visitas. Bem-vindo ao topo do autocuidado.
-                    </p>
-                </div>
-                <div class="flex gap-10">
-                    <div class="text-center group">
-                        <div class="text-4xl font-black text-amber-500 transition-transform group-hover:scale-110">10+</div>
-                        <div class="text-[9px] uppercase font-black text-zinc-600 tracking-[0.2em]">Anos de Tradição</div>
-                    </div>
-                    <div class="w-px h-12 bg-zinc-800 hidden md:block"></div>
-                    <div class="text-center group">
-                        <div class="text-4xl font-black text-amber-500 transition-transform group-hover:scale-110">100%</div>
-                        <div class="text-[9px] uppercase font-black text-zinc-600 tracking-[0.2em]">Foco em Você</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STATUS TILE -->
-            <div class="md:col-span-3 rounded-[2rem] bg-zinc-900 p-8 flex flex-col justify-center items-center text-center bento-card">
-                <div class="relative mb-3">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse absolute -right-1 -top-1"></div>
-                    <i data-lucide="clock" class="w-8 h-8 text-zinc-700"></i>
-                </div>
-                <h4 class="text-lg font-black italic leading-tight">ABERTO<br/>AGORA</h4>
-                <p class="text-zinc-600 text-[9px] mt-2 font-bold uppercase tracking-widest">Ter-Sáb | 09h - 20h</p>
-            </div>
-
-            <!-- LOCALIZAÇÃO TILE -->
-            <div class="md:col-span-5 rounded-[2rem] bg-amber-500 p-8 flex flex-col justify-between text-black bento-card">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="text-2xl font-black uppercase italic leading-none mb-1">Unidade Central</h3>
-                        <p class="font-bold text-black/80 text-sm">Rua das Barbearias, 123 • Centro</p>
-                    </div>
-                    <i data-lucide="map-pin" class="w-7 h-7 opacity-30"></i>
-                </div>
-                <a href="https://maps.google.com" target="_blank" class="text-black font-black uppercase tracking-[0.2em] text-[9px] mt-6 flex items-center hover:underline italic">
-                    Rastrear no Google Maps →
-                </a>
-            </div>
-
-            <!-- SOCIAL TILE -->
-            <div class="md:col-span-4 rounded-[2rem] bg-zinc-900/40 p-8 flex items-center justify-between shadow-lg bento-card">
-                <div>
-                    <span class="text-[9px] text-zinc-600 uppercase font-black tracking-widest mb-1 block italic">Social Mindset</span>
-                    <span class="text-lg font-black text-amber-500">@primebarber</span>
-                </div>
-                <a href="https://instagram.com" target="_blank" class="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-black transition-all">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                </a>
-            </div>
-        </div>
-
-        <footer class="mt-8 py-8 text-center text-zinc-800 text-[10px] font-black uppercase tracking-[0.5em]">
-            © 2024 Barbearia Prime • Premium Masculino
-        </footer>
-    </div>
-
-    <script>
-        // Inicializa ícones Lucide
-        lucide.createIcons();
-
-        // Dados dos serviços
-        const servicos_data = [
-            { id: "degrade", nome: "Degradê", preco: 30 },
-            { id: "barba", nome: "Barba", preco: 20 },
-            { id: "sobrancelha", nome: "Sobrancelha", preco: 10 },
-            { id: "combo", nome: "Combo Prime (Completo)", preco: 50 },
+        // Estrutura de Dados
+        const pillars = [
+          { num: "01", title: "Vitrine Impecável", desc: "Sites de alto padrão que transmitem confiança imediata e elevam sua percepção de valor desde o primeiro contato." },
+          { num: "02", title: "Atração Qualificada", desc: "Foco total em clientes que valorizam qualidade, não apenas preço. Posicionamos você como a escolha óbvia." },
+          { num: "03", title: "Autoridade Local", desc: "Domine as buscas em Campina Grande. Transformamos sua marca na maior referência do seu setor no cenário digital." },
+          { num: "04", title: "Venda Silenciosa", desc: "Comunicação estratégica que prepara o cliente para o fechamento. Menos esforço de venda e mais lucro líquido." }
         ];
 
-        let selecionados = [];
-        let total = 0;
+        const pyramidLevels = [
+          { num: "NÍVEL 01", title: "Invisível", desc: "Dependência total de indicações. Sem presença digital, você não existe para novos mercados e está vulnerável à concorrência." },
+          { num: "NÍVEL 02", title: "Amador", desc: "Visual defasado que gera dúvida. O cliente te encontra, mas a falta de profissionalismo online o faz buscar outra opção." },
+          { num: "NÍVEL 03", title: "Commodity", desc: "Falta de diferenciação clara. Você é comparado apenas pelo menor preço e precisa de um esforço de vendas exaustivo." },
+          { num: "NÍVEL 04", title: "Em Ascensão", desc: "Serviço excelente, mas imagem tímida. Você sabe que pode cobrar mais, mas falta o 'chassi' de autoridade para sustentar seu valor." },
+          { num: "NÍVEL 05", title: "Referência", desc: "Soberania absoluta. Sua reputação online precede o contato inicial, permitindo a seleção dos melhores clientes e lucros máximos." }
+        ];
 
-        // Renderiza a lista de serviços automaticamente
-        function renderServicos() {
-            const container = document.getElementById('lista-servicos');
-            container.innerHTML = servicos_data.map(s => `
-                <div onclick="toggleServico('${s.id}', ${s.preco}, this)" 
-                     class="flex justify-between items-center p-3 rounded-2xl border border-zinc-800/50 bg-zinc-800/10 cursor-pointer group transition-all">
-                    <span class="text-sm font-bold text-zinc-400 group-hover:text-white transition-colors">${s.nome}</span>
-                    <span class="font-black text-zinc-100 text-xs price-tag">R$ ${s.preco}</span>
-                </div>
-            `).join('');
+        // Componente Principal
+        function App() {
+          const [stage, setStage] = useState('hook');
+          const [activePyramidLevel, setActivePyramidLevel] = useState(0);
+
+          useEffect(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, [stage]);
+
+          return (
+            <div className="min-h-screen bg-ink text-[#e8e2d9] font-sans selection:bg-gold/30 selection:text-ink overflow-x-hidden">
+              <Navbar stage={stage} />
+              
+              {/* Barra de Progresso */}
+              <div className="fixed top-[64px] sm:top-[76px] left-0 w-full h-[2px] bg-gold/5 z-[90]">
+                <motion.div 
+                  className="h-full bg-gold shadow-[0_0_10px_rgba(184,154,90,0.5)]"
+                  initial={{ width: "25%" }}
+                  animate={{ width: stage === 'hook' ? "25%" : stage === 'conscious' ? "50%" : stage === 'solution' ? "75%" : "100%" }}
+                />
+              </div>
+
+              <AnimatePresence mode="wait">
+                {stage === 'hook' && (
+                  <motion.div key="hook" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
+                    <section className="min-h-screen flex flex-col justify-center px-6 sm:px-[12%] pt-40 sm:pt-48 pb-20 relative overflow-hidden bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(184,154,90,0.06)_0%,transparent_70%)]">
+                      <div className="absolute top-0 right-0 p-12 pointer-events-none opacity-[0.03] font-serif italic text-[clamp(120px,18vw,280px)] leading-none text-gold z-0 select-none whitespace-nowrap">Impacto</div>
+                      <div className="relative z-10 max-w-5xl">
+                        <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.4em] text-gold font-bold mb-10">
+                          <div className="h-[1px] w-12 bg-gold"></div>O POSICIONAMENTO DOS LÍDERES
+                        </div>
+                        <h1 className="font-serif text-[clamp(40px,7.5vw,90px)] font-light leading-[1] mb-10 tracking-tight">
+                          Construa sua <span className="italic text-gold">autoridade.</span><br />
+                          Sua vitrine digital <span className="text-red-500 italic">define seu faturamento.</span>
+                        </h1>
+                        <p className="text-lg sm:text-2xl font-light leading-relaxed text-[#e8e2d9]/60 mb-14 max-w-4xl">
+                          O mercado julga seu serviço pelo que encontra no Google. Não deixe uma presença amadora <span className="text-gold">afastar seus melhores clientes.</span>
+                        </p>
+                        <div className="flex flex-wrap gap-8 items-center">
+                          <button onClick={() => setStage('conscious')} className="group relative overflow-hidden bg-gold text-ink px-14 py-6 text-[11px] font-extrabold uppercase tracking-[0.25em] transition-all hover:bg-gold-light hover:px-16">
+                            <span className="relative z-10">Quero dominar meu nicho</span>
+                            <span className="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">→</span>
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+                  </motion.div>
+                )}
+
+                {stage === 'conscious' && (
+                  <motion.div key="conscious" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
+                    <section className="min-h-screen py-32 px-6 sm:px-[12%]">
+                      <div className="text-center mb-16">
+                        <div className="eyebrow mx-auto w-fit mb-6">Fase 02: Jornada da Autoridade</div>
+                        <h2 className="font-serif text-4xl font-light mb-4 text-center">Sua marca está <span className="italic text-gold">travada em qual nível?</span></h2>
+                      </div>
+                      <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+                        <div className="space-y-3">
+                          {pyramidLevels.map((level, idx) => (
+                            <button key={idx} onClick={() => setActivePyramidLevel(idx)} className={`w-full text-left p-6 transition-all border ${activePyramidLevel === idx ? 'bg-gold/10 border-gold shadow-lg shadow-gold/5' : 'bg-[#13110e] border-gold/10 opacity-50'}`} style={{ marginLeft: `${(4-idx)*4}%`, width: `${100-((4-idx)*4)}%` }}>
+                              <div className="flex items-center gap-4">
+                                <span className="font-serif text-xl italic text-gold">{level.num}</span>
+                                <h3 className="text-[11px] font-bold uppercase tracking-widest">{level.title}</h3>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="bg-[#13110e] border border-gold/30 p-10 min-h-[350px] flex flex-col justify-center relative">
+                          <h4 className="text-gold font-serif text-2xl italic mb-4">{pyramidLevels[activePyramidLevel].title}</h4>
+                          <p className="text-[#e8e2d9]/70 leading-relaxed text-lg">{pyramidLevels[activePyramidLevel].desc}</p>
+                        </div>
+                      </div>
+                      <div className="mt-20 flex justify-between gap-8 border-t border-gold/10 pt-10">
+                        <button onClick={() => setStage('hook')} className="text-[10px] text-gold/40 hover:text-gold uppercase tracking-widest font-bold">← Voltar</button>
+                        <button onClick={() => setStage('solution')} className="bg-gold text-ink px-12 py-5 text-[11px] font-bold uppercase tracking-widest hover:bg-gold-light">Ver Metodologia →</button>
+                      </div>
+                    </section>
+                  </motion.div>
+                )}
+
+                {stage === 'solution' && (
+                  <motion.div key="solution" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }}>
+                    <section className="py-24 px-6 sm:px-[12%]">
+                      <div className="eyebrow w-fit mb-12">Fase 03: Diferenciação Estratégica</div>
+                      <h2 className="font-serif text-4xl font-light mb-16 max-w-4xl">Quatro pilares para <span className="italic text-gold">blindar</span> sua marca.</h2>
+                      <div className="grid lg:grid-cols-2 gap-16 mb-24">
+                        <div className="grid gap-4">
+                          {pillars.map((pillar) => (
+                            <div key={pillar.num} className="bg-[#151310] border border-gold/10 p-8 flex items-start gap-6 hover:border-gold/40 transition-all">
+                              <span className="font-serif text-3xl text-gold/20">{pillar.num}</span>
+                              <div>
+                                <h3 className="text-xs font-bold uppercase tracking-widest text-gold mb-2">{pillar.title}</h3>
+                                <p className="text-[13px] text-[#e8e2d9]/50 leading-relaxed">{pillar.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="bg-[#13110e] border border-gold/30 p-10 h-fit lg:sticky lg:top-32">
+                           <h3 className="font-serif text-3xl mb-8 italic text-[#e8e2d9]"><span className="text-green-500">Diagnóstico</span> Digital 360</h3>
+                           <ul className="space-y-4 text-sm text-[#e8e2d9]/60 mb-10">
+                              <li className="flex gap-3"><span className="text-gold">—</span>Análise de Conversão</li>
+                              <li className="flex gap-3"><span className="text-gold">—</span>Mapeamento de SEO Local</li>
+                              <li className="flex gap-3"><span className="text-gold">—</span>Auditoria de Autoridade</li>
+                              <li className="flex gap-3"><span className="text-gold">—</span>Plano Estratégico (30 Dias)</li>
+                           </ul>
+                           <div className="pt-8 border-t border-gold/10 flex flex-col items-center gap-6 text-center">
+                              <div className="text-3xl font-serif text-gold-light">R$ 280</div>
+                              <button onClick={() => setStage('cta')} className="w-full bg-gold text-ink px-10 py-5 text-[10px] font-bold uppercase tracking-widest hover:bg-gold-light">Garantir Meu Diagnóstico</button>
+                           </div>
+                        </div>
+                      </div>
+                    </section>
+                  </motion.div>
+                )}
+
+                {stage === 'cta' && (
+                  <motion.div key="cta" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }} transition={{ duration: 0.5 }}>
+                    <section className="min-h-[85vh] flex items-center justify-center py-24 px-6 sm:px-[12%] text-center">
+                        <div className="relative z-10 max-w-3xl">
+                          <Reveal>
+                            <div className="eyebrow mx-auto w-fit mb-8 uppercase tracking-[0.3em] font-bold">O próximo passo</div>
+                            <h2 className="font-serif text-5xl font-light mb-8">Chega de ser <span className="italic text-gold">apenas mais um.</span></h2>
+                            <p className="text-lg text-[#e8e2d9]/60 leading-relaxed mb-12 italic">O mercado não espera. Assuma o controle da sua imagem digital ou continue entregando seus clientes para quem investe em posicionamento.</p>
+                            <a href="https://wa.me/5581995655408?text=Olá,%20vi%20o%20site%20e%20quero%20fazer%20o%20Diagnóstico%20Digital." target="_blank" rel="noopener noreferrer" className="inline-block bg-gold text-ink px-16 py-6 text-xs font-bold uppercase tracking-[0.25em] transition-all hover:bg-gold-light shadow-xl shadow-gold/20">Iniciar Diagnóstico Real (R$ 280)</a>
+                            <button onClick={() => setStage('hook')} className="text-[9px] text-[#e8e2d9]/20 hover:text-gold/60 uppercase tracking-widest font-bold mt-12 block underline mx-auto">Voltar ao Início</button>
+                          </Reveal>
+                        </div>
+                    </section>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <footer className="px-6 sm:px-12 py-12 border-t border-gold/10 bg-[#070605] flex flex-col sm:flex-row justify-between items-center gap-8 text-[10px] text-[#e8e2d9]/30 uppercase tracking-[0.2em] font-bold">
+                <p>© 2026 O Impacto · Campina Grande, PB</p>
+                <p>Estratégia · Marca · Performance</p>
+              </footer>
+            </div>
+          );
         }
 
-        // Sistema de seleção
-        function toggleServico(id, preco, el) {
-            const index = selecionados.indexOf(id);
-            if (index > -1) {
-                selecionados.splice(index, 1);
-                total -= preco;
-                el.classList.remove('selected');
-            } else {
-                selecionados.push(id);
-                total += preco;
-                el.classList.add('selected');
-            }
-            document.getElementById('total-val').innerText = 'R$ ' + total;
-        }
-
-        // Agendamento via WhatsApp
-        function abrirWhatsApp() {
-            const fone = "5581995655408";
-            
-            if (selecionados.length === 0) {
-                alert("Por favor, selecione ao menos um serviço executivo!");
-                document.getElementById('servicos').scrollIntoView({behavior:'smooth'});
-                return;
-            }
-
-            const itens = servicos_data
-                .filter(s => selecionados.includes(s.id))
-                .map(s => `- ${s.nome} (R$ ${s.preco})`)
-                .join("%0A");
-
-            const msg = `*SOLICITAÇÃO DE AGENDAMENTO PREMIUM*%0A%0A` +
-                        `Olá! Desejo reservar os seguintes serviços na Barbearia Prime:%0A%0A` +
-                        `${itens}%0A%0A` +
-                        `*Investimento Total: R$ ${total}*%0A%0A` +
-                        `Gostaria de verificar a disponibilidade de agenda para esta semana.`;
-            
-            window.open(`https://wa.me/${fone}?text=${msg}`, "_blank");
-        }
-
-        // Inicia a aplicação
-        renderServicos();
+        // Renderização Final
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
